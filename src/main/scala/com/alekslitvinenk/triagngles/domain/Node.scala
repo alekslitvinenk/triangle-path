@@ -1,5 +1,8 @@
 package com.alekslitvinenk.triagngles.domain
 
-case class Node(value: Int, path: Array[Int]) {
-  val sum: Int = if(path.isEmpty) value else path.sum
+import cats.data.NonEmptyList
+
+case class Node(path: NonEmptyList[Int]) {
+  val value: Int = path.head
+  val sum: Int = path.toList.sum
 }
