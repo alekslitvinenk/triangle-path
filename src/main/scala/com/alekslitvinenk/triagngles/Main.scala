@@ -6,24 +6,24 @@ import scala.io.Source
 
 object Main extends App {
   
-  private val source = Source.fromResource("data_small.txt")
-  private val source2 = Source.fromInputStream(System.in)
+  private val source = Source.fromInputStream(System.in)
   
-  private val lines = source.getLines()
-  private val previous = Array(Node(lines.next().toInt))
+  private val lines = source.getLines().takeWhile(p => p.nonEmpty && p != "\n").toList
+  private val rootNodeVal = lines.head.toInt
+  private val previous = Array(Node(rootNodeVal, Array(rootNodeVal)))
   
-  val tree = lines.foldLeft(previous) { (prev, line) =>
+  val tree = lines.tail.foldLeft(previous) { (prev, line) =>
     val row = line.split(" ").map(_.toInt)
     val pairs = row.zip(row.tail)
-    
+
     prev.zip(pairs).flatMap { o =>
       List(
-        Node(o._2._1, o._2._1 :: o._1.prevPath),
-        Node(o._2._1, o._2._1 :: o._1.prevPath),
+        Node(o._2._1, o._1.path :+ o._2._1),
+        Node(o._2._2, o._1.path :+ o._2._2),
       )
     }
   }
   
-  val rez = tree.minBy(_.sum).path
+  val rez = tree.minBy(_.sum).path.toList
   println(rez)
 }
